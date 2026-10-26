@@ -1,0 +1,14 @@
+{
+  "name": "claude-mods",
+  "owner": {
+    "name": "Jesús García Potes"
+  },
+  "description": "Mods for Claude Code by Jesús García Potes.",
+  "plugins": [
+    {
+      "name": "usage-band",
+      "source": "./usage-band",
+      "description": "Always-on band and /consumo pane with your 5h and 7d usage windows, context, session cost and RAM."
+    }
+  ]
+}

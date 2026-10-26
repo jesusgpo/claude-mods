@@ -1,0 +1,8 @@
+{
+  "name": "usage-band",
+  "version": "0.1.0",
+  "description": "Always-on band and /consumo pane with your 5h and 7d usage windows, context, session cost and RAM.",
+  "author": { "name": "Jesús García Potes" },
+  "license": "MIT",
+  "types": "./types/index.d.ts"
+}
