@@ -15,6 +15,8 @@ The session cost is the API-equivalent figure `/cost` shows: what the session's 
 
 RAM in use is read on macOS, Linux and Windows, counted the way each system's own monitor counts it: Activity Monitor's "Memory Used" on macOS (`vm_stat`), total less `MemAvailable` on Linux (`/proc/meminfo`), and Task Manager's "In use" on Windows (PowerShell). Where none of them works, the RAM meter is left out.
 
+![La band de usage-band encima del prompt, con los dos límites de uso, el contexto, la RAM y el coste](docs/usage-band.png)
+
 ### Install
 
 At the prompt of a Claude Code terminal session:
