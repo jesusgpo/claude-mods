@@ -4,13 +4,13 @@ import type { Register } from 'claude-code'
 import type { ContextFigures, Usage, UsageWindow } from '../types'
 
 import { clamp, money, number, resetIn } from './format'
+import { readRam } from './ram'
 import { altText, bandSvg, paneSvg } from './svg'
 
 const usage = atom({ plugin: 'usage-band', key: 'usage' } as const, null)
 
 const PANE = 'usage-pane'
 const REFRESH_MS = 30_000
-const GIB = 1024 ** 3
 
 const windowText = (window: UsageWindow | null, now: number) =>
   window === null
@@ -26,8 +26,10 @@ export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     const refresh = async () => {
       const session = await $.session.usage()
-      const total = await $.process.run(['sysctl', '-n', 'hw.memsize'])
-      const vm = await $.process.run(['vm_stat'])
+      const ram = await readRam(
+        path => $.fs.read(path),
+        argv => $.process.run(argv),
+      )
 
       const window = (kind: string): UsageWindow | null => {
         const found = session.rateLimits.find(r => r.kind === kind)
@@ -36,25 +38,10 @@ export const register: Register = on => {
           : null
       }
 
-      // Memory used as Activity Monitor counts it: app memory (anonymous
-      // pages less purgeable ones) + wired + what the compressor occupies.
-      // File cache and inactive pages are reclaimable, so they are not "used".
-      const pages = (label: string) =>
-        Number(new RegExp(`${label}:\\s+(\\d+)`).exec(vm.stdout)?.[1] ?? 0)
-      const pageSize = Number(/page size of (\d+) bytes/.exec(vm.stdout)?.[1] ?? 0)
-      const usedPages =
-        pages('Anonymous pages') -
-        pages('Pages purgeable') +
-        pages('Pages wired down') +
-        pages('Pages occupied by compressor')
-      const hasRam = total.exitCode === 0 && vm.exitCode === 0 && pageSize > 0
-
       const snapshot: Usage = {
         fiveHour: window('five_hour'),
         sevenDay: window('seven_day'),
-        ram: hasRam
-          ? { usedGiB: (usedPages * pageSize) / GIB, totalGiB: Number(total.stdout) / GIB }
-          : null,
+        ram,
         cost: session.cost?.usd ?? null,
         context: {
           percent: session.context.percent ?? null,
