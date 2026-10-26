@@ -13,7 +13,7 @@ On the Claude Code desktop app both are drawn as graphics that follow your light
 
 The session cost is the API-equivalent figure `/cost` shows: what the session's tokens would cost at API prices. On a Pro or Max subscription you are not billed that amount; your real limits are the 5-hour and 7-day windows.
 
-RAM is read with `vm_stat` and `sysctl`, so it shows on macOS only, counted the way Activity Monitor counts "Memory Used".
+RAM in use is read on macOS, Linux and Windows, counted the way each system's own monitor counts it: Activity Monitor's "Memory Used" on macOS (`vm_stat`), total less `MemAvailable` on Linux (`/proc/meminfo`), and Task Manager's "In use" on Windows (PowerShell). Where none of them works, the RAM meter is left out.
 
 ### Install
 
